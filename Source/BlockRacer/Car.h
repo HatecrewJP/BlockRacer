@@ -9,6 +9,9 @@
 #include "GameFramework/Character.h"
 #include "Car.generated.h"
 
+typedef int8 TurnDirection;
+
+
 UCLASS()
 class BLOCKRACER_API ACar : public ACharacter
 {
@@ -21,18 +24,19 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	void Accelerate();
 	void Break();
+	void Turn(TurnDirection Direction);
 	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	void Move();
+	void Move(float DeltaTime);
 
 private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USphereComponent> CollisionBox = nullptr;
 
 	UPROPERTY(EditAnywhere)
-	uint8 MAX_SPEED = 240;
+	uint8 MAX_SPEED = 60;
 
 	UPROPERTY(EditAnywhere)
 	uint8 Acceleration = 4;
@@ -42,6 +46,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	uint8 BreakingMultiplier = 10;
+
+	UPROPERTY(EditAnywhere)
+	float TurnAngle = 1;
 
 	
 	int16 Speed = 0;

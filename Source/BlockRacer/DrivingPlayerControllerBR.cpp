@@ -3,6 +3,9 @@
 
 #include "DrivingPlayerControllerBR.h"
 
+#define TurnDirectionRight 1
+#define TurnDirectionLeft -1
+
 void ADrivingPlayerControllerBR::OnPossess(APawn *aPawn)
 {
     Super::OnPossess(aPawn);
@@ -22,12 +25,23 @@ void ADrivingPlayerControllerBR::OnPossess(APawn *aPawn)
 
     if(Accelerate) EnhancedInputComponent->BindAction(Accelerate,ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleAccelerate);
     if(Break) EnhancedInputComponent->BindAction(Break,ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleBreak);
+    if(TurnLeft) 
+    {
+        EnhancedInputComponent->BindAction(TurnLeft,ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleTurnLeft);
+        UE_LOG(LogTemp,Log,TEXT("Turn Left bound"));
+    }
+    if(TurnRight)
+    {
+        EnhancedInputComponent->BindAction(TurnRight,ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleTurnRight);
+       
+    }
 
 }
 
 void ADrivingPlayerControllerBR::OnUnPossess()
 {
     EnhancedInputComponent->ClearActionBindings();
+    Super::OnUnPossess();
 
 }
 
@@ -39,6 +53,19 @@ void ADrivingPlayerControllerBR::HandleAccelerate()
 void ADrivingPlayerControllerBR::HandleBreak()
 {
    if(PlayerCar) PlayerCar->Break();
-   Super::OnUnPossess();
-   
 }
+
+void ADrivingPlayerControllerBR::HandleTurnLeft()
+{
+    if(PlayerCar) PlayerCar->Turn(TurnDirectionLeft);
+
+}
+void ADrivingPlayerControllerBR::HandleTurnRight()
+{
+    if(PlayerCar)
+    {
+        PlayerCar->Turn(TurnDirectionRight);
+        
+    }
+}
+
