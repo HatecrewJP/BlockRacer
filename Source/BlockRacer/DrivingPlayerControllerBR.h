@@ -30,6 +30,7 @@ public:
 	UInputAction* Break = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input| Character Movement")
+<<<<<<< HEAD
 	UInputAction* TurnLeft = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input| Character Movement")
@@ -40,6 +41,10 @@ public:
 
 
 
+=======
+	UInputMappingContext* InputMappingContext = nullptr;
+
+>>>>>>> 1d42278a63653ced52e317a376d317e4ec96d204
 #pragma endregion
 
 protected:
@@ -49,8 +54,11 @@ protected:
 #pragma region Handle
 	void HandleAccelerate();
 	void HandleBreak();
+<<<<<<< HEAD
 	void HandleTurnLeft();
 	void HandleTurnRight();
+=======
+>>>>>>> 1d42278a63653ced52e317a376d317e4ec96d204
 #pragma endregion
 
 private:

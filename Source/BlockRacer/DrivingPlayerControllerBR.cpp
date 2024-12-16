@@ -3,9 +3,12 @@
 
 #include "DrivingPlayerControllerBR.h"
 
+<<<<<<< HEAD
 #define TurnDirectionRight 1
 #define TurnDirectionLeft -1
 
+=======
+>>>>>>> 1d42278a63653ced52e317a376d317e4ec96d204
 void ADrivingPlayerControllerBR::OnPossess(APawn *aPawn)
 {
     Super::OnPossess(aPawn);
@@ -25,6 +28,7 @@ void ADrivingPlayerControllerBR::OnPossess(APawn *aPawn)
 
     if(Accelerate) EnhancedInputComponent->BindAction(Accelerate,ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleAccelerate);
     if(Break) EnhancedInputComponent->BindAction(Break,ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleBreak);
+<<<<<<< HEAD
     if(TurnLeft) 
     {
         EnhancedInputComponent->BindAction(TurnLeft,ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleTurnLeft);
@@ -35,13 +39,18 @@ void ADrivingPlayerControllerBR::OnPossess(APawn *aPawn)
         EnhancedInputComponent->BindAction(TurnRight,ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleTurnRight);
        
     }
+=======
+>>>>>>> 1d42278a63653ced52e317a376d317e4ec96d204
 
 }
 
 void ADrivingPlayerControllerBR::OnUnPossess()
 {
     EnhancedInputComponent->ClearActionBindings();
+<<<<<<< HEAD
     Super::OnUnPossess();
+=======
+>>>>>>> 1d42278a63653ced52e317a376d317e4ec96d204
 
 }
 
@@ -53,6 +62,7 @@ void ADrivingPlayerControllerBR::HandleAccelerate()
 void ADrivingPlayerControllerBR::HandleBreak()
 {
    if(PlayerCar) PlayerCar->Break();
+<<<<<<< HEAD
 }
 
 void ADrivingPlayerControllerBR::HandleTurnLeft()
@@ -69,3 +79,8 @@ void ADrivingPlayerControllerBR::HandleTurnRight()
     }
 }
 
+=======
+   Super::OnUnPossess();
+   
+}
+>>>>>>> 1d42278a63653ced52e317a376d317e4ec96d204

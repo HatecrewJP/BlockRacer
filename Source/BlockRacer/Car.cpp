@@ -40,6 +40,7 @@ void ACar::Break( )
 		}
 		Speed = FMath::Clamp(Speed,0,MAX_SPEED);
 	}
+<<<<<<< HEAD
 
 }
 
@@ -55,10 +56,22 @@ void ACar::Move(float DeltaTime)
 		uint16 SpeedMS = Speed * 1000;
 
 		FVector NewLocation = CurrentLocation + ForwardVector * SpeedMS * DeltaTime;
+=======
+}
+
+void ACar::Move()
+{
+	if(Speed>0)
+	{
+		FVector CurrentLocation = GetActorLocation();
+		FVector ForwardVector = GetActorForwardVector();
+		FVector NewLocation = CurrentLocation + ForwardVector * Speed;
+>>>>>>> 1d42278a63653ced52e317a376d317e4ec96d204
 		SetActorLocation(NewLocation);
 	}
 }
 
+<<<<<<< HEAD
 
 
 void ACar::Turn(TurnDirection Direction)
@@ -76,6 +89,8 @@ void ACar::Turn(TurnDirection Direction)
 
 
 
+=======
+>>>>>>> 1d42278a63653ced52e317a376d317e4ec96d204
 // Called when the game starts or when spawned
 void ACar::BeginPlay()
 {
@@ -87,16 +102,26 @@ void ACar::BeginPlay()
 // Called every frame
 void ACar::Tick(float DeltaTime)
 {
+<<<<<<< HEAD
 	//UE_LOG(LogTemp, Warning, TEXT("%u"),Speed);
+=======
+	UE_LOG(LogTemp, Warning, TEXT("%u"),Speed);
+>>>>>>> 1d42278a63653ced52e317a376d317e4ec96d204
 	Super::Tick(DeltaTime);
 	if(Speed > 0)
 	{
 		Speed = Speed - Deceleration;
 		Speed = FMath::Clamp(Speed,0,MAX_SPEED);
+<<<<<<< HEAD
 		Move(DeltaTime);
 		
 	}
 	//UE_LOG(LogTemp,Display,TEXT("%s"),*GetActorLocation().ToString());
+=======
+		Move();
+	}
+	
+>>>>>>> 1d42278a63653ced52e317a376d317e4ec96d204
 
 
 
