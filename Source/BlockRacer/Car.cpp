@@ -2,7 +2,7 @@
 
 
 #include "Car.h"
-
+#include "Misc/App.h"
 
 // Sets default values
 ACar::ACar()
@@ -13,13 +13,13 @@ ACar::ACar()
 	
 }
 
-void ACar::Accelerate( )
+void ACar::Accelerate(int8 Direction)
 {
 	
-	if(Speed < MAX_SPEED)
+	if(Speed < MAX_SPEED_FOREWARD && Speed > MAX_SPEED_BACKWARD)
 	{	
-		Speed = Speed + Acceleration;
-		Speed = FMath::Clamp(Speed,0,MAX_SPEED);
+		Speed = Speed + Acceleration * Direction;
+		Speed = FMath::Clamp(Speed,MAX_SPEED_BACKWARD,MAX_SPEED_FOREWARD);
 	}
 }
 
@@ -30,29 +30,33 @@ void ACar::Break( )
 	if(Speed > 0)
 	{
 		uint16 BreakingDeceleration = BreakingMultiplier * Deceleration;
-		if(Speed > BreakingDeceleration)
-		{
-			Speed = Speed - BreakingDeceleration;
-		}
-		else
-		{
-			Speed = 0;
-		}
-		Speed = FMath::Clamp(Speed,0,MAX_SPEED);
+		Speed = Speed - BreakingDeceleration;
+		Speed = FMath::Clamp(Speed,MAX_SPEED_BACKWARD,MAX_SPEED_FOREWARD);
 	}
 
 }
+void ACar::Steering(int8 Direction)
+{
+	if(Direction != 1 && Direction != -1)
+	{
+		UE_LOG(LogTemp,Error,TEXT("Invalid Turn Direction %d"),Direction);
+		return;
+	}
+	float DeltaTime = FApp::GetDeltaTime();
 
+	CurrentSteeringAngle = FMath::FInterpTo<float,float,float,float>(CurrentSteeringAngle,MaxSteeringAngle,DeltaTime,4.0f) * Direction;
+}
 void ACar::Move(float DeltaTime)
 {
-	if(Speed>0)
+	if(Speed>MAX_SPEED_BACKWARD)
 	
 	{
 		FVector CurrentLocation = GetActorLocation();
 		FVector ForwardVector = GetActorForwardVector();
 		
 		//Convert Speed into from m/s into cm/s
-		uint16 SpeedMS = Speed * 1000;
+		int32 SpeedMS = Speed * 1000;
+
 
 		FVector NewLocation = CurrentLocation + ForwardVector * SpeedMS * DeltaTime;
 		SetActorLocation(NewLocation);
@@ -61,16 +65,18 @@ void ACar::Move(float DeltaTime)
 
 
 
-void ACar::Turn(TurnDirection Direction)
+void ACar::Turn()
 {
+	float DeltaTime = FApp::GetDeltaTime();
+	//UE_LOG(LogTemp,Log,TEXT("%f"),DeltaTime);
+	FRotator NewRotation;
+	float RotationAngle = CurrentSteeringAngle * Speed * SpeedToRotationFactor;
+	//UE_LOG(LogTemp,Log,TEXT("%f"),RotationAngle);
+	NewRotation.Yaw = RotationAngle;
+	//UE_LOG(LogTemp,Log,TEXT("%s"),*NewRotation.ToString());
 
-	if(Direction != 1 && Direction != -1)
-	{
-		UE_LOG(LogTemp,Error,TEXT("Invalid Turn Direction %d"),Direction);
-		return;
-	}
-	float RotationAngle = TurnAngle * Direction;
-	AddControllerYawInput(RotationAngle);
+	AddActorWorldRotation(NewRotation);
+	CurrentSteeringAngle = 0;
 }
 
 
@@ -87,14 +93,21 @@ void ACar::BeginPlay()
 // Called every frame
 void ACar::Tick(float DeltaTime)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("%u"),Speed);
+	UE_LOG(LogTemp, Warning, TEXT("%d"),Speed);
 	Super::Tick(DeltaTime);
 	if(Speed > 0)
 	{
 		Speed = Speed - Deceleration;
-		Speed = FMath::Clamp(Speed,0,MAX_SPEED);
+		Speed = FMath::Clamp(Speed,0,MAX_SPEED_FOREWARD);
 		Move(DeltaTime);
-		
+		Turn();
+	}
+	else if(Speed >= MAX_SPEED_BACKWARD && Speed < 0)
+	{
+		Speed = Speed + Deceleration;
+		Speed = FMath::Clamp(Speed,MAX_SPEED_BACKWARD,0);
+		Move(DeltaTime);
+		Turn();
 	}
 	//UE_LOG(LogTemp,Display,TEXT("%s"),*GetActorLocation().ToString());
 

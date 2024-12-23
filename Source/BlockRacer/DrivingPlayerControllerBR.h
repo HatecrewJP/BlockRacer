@@ -23,17 +23,17 @@ class BLOCKRACER_API ADrivingPlayerControllerBR : public APlayerController
 
 #pragma region InputAction
 public:
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input| Character Movement")
-	UInputAction* Accelerate = nullptr;
+	UInputAction* Move = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input| Character Movement")
 	UInputAction* Break = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input| Character Movement")
-	UInputAction* TurnLeft = nullptr;
+	UInputAction* Steering = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input| Character Movement")
-	UInputAction* TurnRight = nullptr;
+
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input| Character Movement")
 	UInputMappingContext* InputMappingContext = nullptr;
@@ -47,10 +47,10 @@ protected:
 	virtual void OnUnPossess() override;
 
 #pragma region Handle
-	void HandleAccelerate();
+	void HandleMove(const FInputActionValue& InputActionValue);
 	void HandleBreak();
-	void HandleTurnLeft();
-	void HandleTurnRight();
+	void HandleSteering(const FInputActionValue& InputActionValue);
+	
 #pragma endregion
 
 private:

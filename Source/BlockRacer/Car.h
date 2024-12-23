@@ -9,7 +9,7 @@
 #include "GameFramework/Character.h"
 #include "Car.generated.h"
 
-typedef int8 TurnDirection;
+
 
 
 UCLASS()
@@ -22,9 +22,10 @@ public:
 	ACar();
 
 	virtual void Tick(float DeltaTime) override;
-	void Accelerate();
+	void Accelerate(int8 Direction);
 	void Break();
-	void Turn(TurnDirection Direction);
+	void Steering(int8 Direction);
+	
 	
 protected:
 	// Called when the game starts or when spawned
@@ -35,24 +36,31 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USphereComponent> CollisionBox = nullptr;
 
-	UPROPERTY(EditAnywhere)
-	uint8 MAX_SPEED = 60;
+	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
+	uint8 MAX_SPEED_FOREWARD = 80;
 
-	UPROPERTY(EditAnywhere)
-	uint8 Acceleration = 4;
+	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
+	int8 MAX_SPEED_BACKWARD = -30;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
+	uint8 Acceleration = 3;
+
+	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
 	uint8 Deceleration = 1;
 
-	UPROPERTY(EditAnywhere)
-	uint8 BreakingMultiplier = 10;
+	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
+	uint8 BreakingMultiplier = 1;
 
-	UPROPERTY(EditAnywhere)
-	float TurnAngle = 1;
+	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
+	float MaxSteeringAngle = 40;
 
+	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
+	float SpeedToRotationFactor = 0.005f;
 	
 	int16 Speed = 0;
+	float CurrentSteeringAngle = 0;
 
+	void Turn();
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 

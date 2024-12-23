@@ -3,8 +3,9 @@
 
 #include "DrivingPlayerControllerBR.h"
 
-#define TurnDirectionRight 1
-#define TurnDirectionLeft -1
+
+#define MoveDirectionForeward 1
+#define MoveDirectionBackward -1
 
 void ADrivingPlayerControllerBR::OnPossess(APawn *aPawn)
 {
@@ -23,18 +24,11 @@ void ADrivingPlayerControllerBR::OnPossess(APawn *aPawn)
     EnhancedLocalPlayerSubsystem->ClearAllMappings();
     EnhancedLocalPlayerSubsystem->AddMappingContext(InputMappingContext,0);
 
-    if(Accelerate) EnhancedInputComponent->BindAction(Accelerate,ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleAccelerate);
-    if(Break) EnhancedInputComponent->BindAction(Break,ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleBreak);
-    if(TurnLeft) 
-    {
-        EnhancedInputComponent->BindAction(TurnLeft,ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleTurnLeft);
-      
-    }
-    if(TurnRight)
-    {
-        EnhancedInputComponent->BindAction(TurnRight,ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleTurnRight);
-       
-    }
+    if(Move)     EnhancedInputComponent->BindAction(Move,     ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleMove);
+    if(Break)    EnhancedInputComponent->BindAction(Break,    ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleBreak);
+    if(Steering) EnhancedInputComponent->BindAction(Steering, ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleSteering);
+    
+
 
 }
 
@@ -45,9 +39,10 @@ void ADrivingPlayerControllerBR::OnUnPossess()
 
 }
 
-void ADrivingPlayerControllerBR::HandleAccelerate()
+void ADrivingPlayerControllerBR::HandleMove(const FInputActionValue& InputActionValue)
 {
-    if(PlayerCar) PlayerCar->Accelerate();
+    float Direction = InputActionValue.Get<float>();
+    if(PlayerCar) PlayerCar->Accelerate(Direction);
 }
 
 void ADrivingPlayerControllerBR::HandleBreak()
@@ -55,17 +50,10 @@ void ADrivingPlayerControllerBR::HandleBreak()
    if(PlayerCar) PlayerCar->Break();
 }
 
-void ADrivingPlayerControllerBR::HandleTurnLeft()
+void ADrivingPlayerControllerBR::HandleSteering(const FInputActionValue& InputActionValue)
 {
-    if(PlayerCar) PlayerCar->Turn(TurnDirectionLeft);
+    float Direction = InputActionValue.Get<float>();
+    if(PlayerCar) PlayerCar->Steering(Direction);
 
-}
-void ADrivingPlayerControllerBR::HandleTurnRight()
-{
-    if(PlayerCar)
-    {
-        PlayerCar->Turn(TurnDirectionRight);
-        
-    }
 }
 
