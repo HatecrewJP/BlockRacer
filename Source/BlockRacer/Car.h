@@ -26,39 +26,51 @@ public:
 	void Break();
 	void Steering(int8 Direction);
 	
-	
+	UFUNCTION(BlueprintCallable)
+	float GetCurrentSpeed();
+
+	UFUNCTION(BlueprintCallable)
+	float GetCurrentSteeringAngle();
+
+	void SetMovementDirection(float Direction);
+	void SetSteeringDirection(float Direction);
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	void Move(float DeltaTime);
 
 private:
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<USphereComponent> CollisionBox = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
-	uint8 MAX_SPEED_FOREWARD = 80;
+	float MAX_SPEED_FOREWARD = 80;
 
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
-	int8 MAX_SPEED_BACKWARD = -30;
+	float MAX_SPEED_BACKWARD = -30;
 
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
-	uint8 Acceleration = 3;
+	float Deceleration = 2;
 
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
-	uint8 Deceleration = 1;
+	float BreakingMultiplier = 1;
 
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
-	uint8 BreakingMultiplier = 1;
+	float MaxSteeringAngle = 20.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
-	float MaxSteeringAngle = 40;
-
-	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
-	float SpeedToRotationFactor = 0.005f;
 	
-	int16 Speed = 0;
+	UPROPERTY(EditAnywhere)
+	float MaxFactor = 0.02 ;
+	UPROPERTY(EditAnywhere)
+	float MinFactor = 0.001;
+	
+	int8 MovementDirection = 0;
+	int8 SteeringDirection = 0;
+
+	float CurrentSpeed = 0;
 	float CurrentSteeringAngle = 0;
+
+	float CalculateLinearSpeedToRotationFactor(float Speed);
 
 	void Turn();
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

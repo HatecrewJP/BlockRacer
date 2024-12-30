@@ -46,10 +46,12 @@ protected:
 	virtual void OnPossess(APawn* aPawn) override;
 	virtual void OnUnPossess() override;
 
-#pragma region Handle
-	void HandleMove(const FInputActionValue& InputActionValue);
+#pragma region HandleFunctions
+	void HandleMoveStarted(const FInputActionValue& InputActionValue);
+	void HandleMoveCompleted(const FInputActionValue& InputActionValue);
 	void HandleBreak();
-	void HandleSteering(const FInputActionValue& InputActionValue);
+	void HandleSteeringStarted(const FInputActionValue& InputActionValue);
+	void HandleSteeringCompleted(const FInputActionValue& InputActionValue);
 	
 #pragma endregion
 

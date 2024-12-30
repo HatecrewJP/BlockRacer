@@ -24,9 +24,13 @@ void ADrivingPlayerControllerBR::OnPossess(APawn *aPawn)
     EnhancedLocalPlayerSubsystem->ClearAllMappings();
     EnhancedLocalPlayerSubsystem->AddMappingContext(InputMappingContext,0);
 
-    if(Move)     EnhancedInputComponent->BindAction(Move,     ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleMove);
+    if(Move)     EnhancedInputComponent->BindAction(Move,     ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleMoveStarted);
+    if(Move)     EnhancedInputComponent->BindAction(Move,     ETriggerEvent::Completed,this,&ADrivingPlayerControllerBR::HandleMoveCompleted);
+
     if(Break)    EnhancedInputComponent->BindAction(Break,    ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleBreak);
-    if(Steering) EnhancedInputComponent->BindAction(Steering, ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleSteering);
+
+    if(Steering) EnhancedInputComponent->BindAction(Steering, ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleSteeringStarted);
+    if(Steering) EnhancedInputComponent->BindAction(Steering, ETriggerEvent::Completed,this,&ADrivingPlayerControllerBR::HandleSteeringCompleted);
     
 
 
@@ -39,10 +43,17 @@ void ADrivingPlayerControllerBR::OnUnPossess()
 
 }
 
-void ADrivingPlayerControllerBR::HandleMove(const FInputActionValue& InputActionValue)
+void ADrivingPlayerControllerBR::HandleMoveStarted(const FInputActionValue& InputActionValue)
 {
     float Direction = InputActionValue.Get<float>();
-    if(PlayerCar) PlayerCar->Accelerate(Direction);
+    //UE_LOG(LogTemp,Log,TEXT("HandleMove Input: %f"),Direction);
+    if(PlayerCar) PlayerCar -> SetMovementDirection(Direction);
+}
+void ADrivingPlayerControllerBR::HandleMoveCompleted(const FInputActionValue& InputActionValue)
+{
+    //UE_LOG(LogTemp,Log,TEXT("Move Complete"));
+    if(PlayerCar) PlayerCar -> SetMovementDirection(0);
+
 }
 
 void ADrivingPlayerControllerBR::HandleBreak()
@@ -50,10 +61,12 @@ void ADrivingPlayerControllerBR::HandleBreak()
    if(PlayerCar) PlayerCar->Break();
 }
 
-void ADrivingPlayerControllerBR::HandleSteering(const FInputActionValue& InputActionValue)
+void ADrivingPlayerControllerBR::HandleSteeringStarted(const FInputActionValue& InputActionValue)
 {
     float Direction = InputActionValue.Get<float>();
-    if(PlayerCar) PlayerCar->Steering(Direction);
-
+    if(PlayerCar) PlayerCar->SetSteeringDirection(Direction);
 }
-
+void ADrivingPlayerControllerBR::HandleSteeringCompleted(const FInputActionValue& InputActionValue)
+{
+    if(PlayerCar) PlayerCar->SetSteeringDirection(0);
+}
