@@ -34,7 +34,7 @@ void ACar::Accelerate(int8 Direction)
 		  	If Direction ==  1, then the CurrentSpeed converges towards MaxSpeedForeward
 			If Direction == -1, then the CurrentSpeed converges towards MaxSpeedBackward
 		*/
-		CurrentSpeed = FMath::FInterpTo(CurrentSpeed,DirectedMaxSpeed,DeltaTime,4.0f);
+		CurrentSpeed = FMath::FInterpTo(CurrentSpeed,DirectedMaxSpeed,DeltaTime,1.0f);
 		
 	}
 }
@@ -93,10 +93,7 @@ void ACar::Steering(int8 Direction)
 
 void ACar::Turn()
 {
-	
 	float SpeedToRotationFactor = CalculateLinearSpeedToRotationFactor(CurrentSpeed);
-
-
 	float DeltaTime = FApp::GetDeltaTime();
 	FRotator NewRotation = FRotator::ZeroRotator;
 	float RotationAngle = CurrentSteeringAngle * CurrentSpeed * SpeedToRotationFactor;
@@ -113,14 +110,9 @@ float ACar::CalculateLinearSpeedToRotationFactor(float Speed)
 		Therefore the SpeedToRotationFactor gets lower when the car is faster.
 		For simplicity reasons this function is a linear function mx+n and the SpeedToRotationFactor is calculated based on the MAX_SPEED_FOREWARD.
 	*/
-	
-
 	float n = MinFactor;
 	float m = (MaxFactor / MAX_SPEED_FOREWARD - MinFactor) / MAX_SPEED_FOREWARD ;
-
 	return m * Speed + n;
-
-
 }
 
 

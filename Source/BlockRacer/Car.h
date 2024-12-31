@@ -44,7 +44,7 @@ protected:
 private:
 
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
-	float MAX_SPEED_FOREWARD = 80;
+	float MAX_SPEED_FOREWARD = 240;
 
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
 	float MAX_SPEED_BACKWARD = -30;
@@ -53,7 +53,7 @@ private:
 	float Deceleration = 2;
 
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
-	float BreakingMultiplier = 1;
+	float BreakingMultiplier = 0.5;
 
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
 	float MaxSteeringAngle = 20.0f;
