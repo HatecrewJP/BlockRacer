@@ -24,7 +24,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	void Accelerate(int8 Direction);
 	void Break();
-	void Steering(int8 Direction);
+	void Steer(int8 Direction);
 	
 	UFUNCTION(BlueprintCallable)
 	float GetCurrentSpeed();
@@ -50,10 +50,10 @@ private:
 	float MAX_SPEED_BACKWARD = -30;
 
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
-	float Deceleration = 2;
+	float Deceleration = 1;
 
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
-	float BreakingMultiplier = 0.5;
+	float BreakingMultiplier = 1.2;
 
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
 	float MaxSteeringAngle = 20.0f;
