@@ -7,13 +7,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Car.generated.h"
+#include "CarBR.generated.h"
 
 
 
 
 UCLASS()
-class BLOCKRACER_API ACar : public ACharacter
+class BLOCKRACER_API ACar : public APawn
 {
 	GENERATED_BODY()
 	

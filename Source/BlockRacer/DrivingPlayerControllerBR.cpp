@@ -4,8 +4,8 @@
 #include "DrivingPlayerControllerBR.h"
 
 
-#define MoveDirectionForeward 1
-#define MoveDirectionBackward -1
+
+
 
 void ADrivingPlayerControllerBR::OnPossess(APawn *aPawn)
 {

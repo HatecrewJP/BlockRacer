@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Car.h"
+#include "CarBR.h"
 #include "Misc/App.h"
 
 // Sets default values
@@ -78,6 +78,8 @@ void ACar::Move(float DeltaTime)
 		FVector ForwardVector = GetActorForwardVector();
 		FVector DeltaLocation = ForwardVector * CurrentSpeed;
 		
+		
+
 		AddActorWorldOffset(DeltaLocation);
 
 		//UE_LOG(LogTemp,Display,TEXT("Delta Location: %s"),*DeltaLocation.ToString());
