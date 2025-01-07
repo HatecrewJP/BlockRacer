@@ -9,7 +9,7 @@ ACar::ACar()
 {
 	PrimaryActorTick.bCanEverTick = true;
 }
-
+#pragma region Car Movement
 void ACar::Accelerate(int8 Direction)
 {
 	
@@ -142,6 +142,7 @@ float ACar::CalculateLinearSpeedToRotationFactor(float Speed)
 	return m * Speed + n;
 }
 
+#pragma endregion
 
 #pragma region DefaultFunctions
 // Called when the game starts or when spawned

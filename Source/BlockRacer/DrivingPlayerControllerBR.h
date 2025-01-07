@@ -34,12 +34,9 @@ public:
 	UInputAction* Steering = nullptr;
 
 
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input| Character Movement")
 	UInputMappingContext* InputMappingContext = nullptr;
-
-
-
+	
 #pragma endregion
 
 protected:
@@ -47,10 +44,10 @@ protected:
 	virtual void OnUnPossess() override;
 
 #pragma region HandleFunctions
-	void HandleMoveStarted(const FInputActionValue& InputActionValue);
-	void HandleMoveCompleted(const FInputActionValue& InputActionValue);
+	void HandleMoveStarted		(const FInputActionValue& InputActionValue);
+	void HandleMoveCompleted	(const FInputActionValue& InputActionValue);
 	void HandleBreak();
-	void HandleSteeringStarted(const FInputActionValue& InputActionValue);
+	void HandleSteeringStarted	(const FInputActionValue& InputActionValue);
 	void HandleSteeringCompleted(const FInputActionValue& InputActionValue);
 	
 #pragma endregion

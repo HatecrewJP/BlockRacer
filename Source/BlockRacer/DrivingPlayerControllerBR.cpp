@@ -3,26 +3,24 @@
 
 #include "DrivingPlayerControllerBR.h"
 
-
-
-
-
 void ADrivingPlayerControllerBR::OnPossess(APawn *aPawn)
 {
     Super::OnPossess(aPawn);
+
+
     PlayerCar = Cast<ACar>(aPawn);
     checkf(PlayerCar, TEXT("ADrivingControllerBR derived classes should only posess ACar derived pawns"));
 
     EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
     checkf(EnhancedInputComponent,TEXT("Unable to get reference to EnhancedInputComponent"));
 
-    UEnhancedInputLocalPlayerSubsystem* EnhancedLocalPlayerSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-    checkf(EnhancedLocalPlayerSubsystem, TEXT("Unable to get reference to EnhancedLocalPlayerSubsystem"));
+    UEnhancedInputLocalPlayerSubsystem* EnhancedInputLocalPlayerSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+    checkf(EnhancedInputLocalPlayerSubsystem, TEXT("Unable to get reference to EnhancedLocalPlayerSubsystem"));
 
     checkf(InputMappingContext,TEXT("No InputMappingContext found"));
 
-    EnhancedLocalPlayerSubsystem->ClearAllMappings();
-    EnhancedLocalPlayerSubsystem->AddMappingContext(InputMappingContext,0);
+    EnhancedInputLocalPlayerSubsystem -> ClearAllMappings();
+    EnhancedInputLocalPlayerSubsystem -> AddMappingContext(InputMappingContext,0);
 
     if(Move)     EnhancedInputComponent->BindAction(Move,     ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleMoveStarted);
     if(Move)     EnhancedInputComponent->BindAction(Move,     ETriggerEvent::Completed,this,&ADrivingPlayerControllerBR::HandleMoveCompleted);
@@ -32,16 +30,15 @@ void ADrivingPlayerControllerBR::OnPossess(APawn *aPawn)
     if(Steering) EnhancedInputComponent->BindAction(Steering, ETriggerEvent::Triggered,this,&ADrivingPlayerControllerBR::HandleSteeringStarted);
     if(Steering) EnhancedInputComponent->BindAction(Steering, ETriggerEvent::Completed,this,&ADrivingPlayerControllerBR::HandleSteeringCompleted);
     
-
-
 }
 
 void ADrivingPlayerControllerBR::OnUnPossess()
 {
     EnhancedInputComponent->ClearActionBindings();
     Super::OnUnPossess();
-
 }
+
+#pragma region HandleFunctions
 
 void ADrivingPlayerControllerBR::HandleMoveStarted(const FInputActionValue& InputActionValue)
 {
@@ -70,3 +67,5 @@ void ADrivingPlayerControllerBR::HandleSteeringCompleted(const FInputActionValue
 {
     if(PlayerCar) PlayerCar->SetSteeringDirection(0);
 }
+
+#pragma endregion

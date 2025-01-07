@@ -20,29 +20,43 @@ class BLOCKRACER_API ACar : public APawn
 public:
 
 	ACar();
-
 	virtual void Tick(float DeltaTime) override;
+	
+#pragma region Car Movement
 	void Accelerate(int8 Direction);
 	void Break();
 	void Steer(int8 Direction);
-	
+#pragma endregion
+
+#pragma region Setter
+	void SetMovementDirection(float Direction);
+	void SetSteeringDirection(float Direction);
+#pragma endregion
+
+#pragma region Getter
 	UFUNCTION(BlueprintCallable)
 	float GetCurrentSpeed();
 
 	UFUNCTION(BlueprintCallable)
 	float GetCurrentSteeringAngle();
-
-	void SetMovementDirection(float Direction);
-	void SetSteeringDirection(float Direction);
+#pragma endregion
+	
 
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	void Move(float DeltaTime);
+
+
+	
 
 private:
 
+	void Move(float DeltaTime);
+	void Turn();
+	float CalculateLinearSpeedToRotationFactor(float Speed);
+
+#pragma region Car Properties
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
 	float MAX_SPEED_FOREWARD = 240;
 
@@ -58,24 +72,25 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
 	float MaxSteeringAngle = 20.0f;
 
-	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement" )
 	float MaxFactor = 0.02 ;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
 	float MinFactor = 0.001;
+
+#pragma endregion
 	
+
+#pragma region Car State
+
 	int8 MovementDirection = 0;
 	int8 SteeringDirection = 0;
 
 	float CurrentSpeed = 0;
 	float CurrentSteeringAngle = 0;
 
-	float CalculateLinearSpeedToRotationFactor(float Speed);
-
-	void Turn();
+#pragma endregion
+	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-
-	
 };
   
