@@ -10,6 +10,15 @@ ACar::ACar()
 	PrimaryActorTick.bCanEverTick = true;
 }
 #pragma region Car Movement
+void ACar::MoveCar()
+{
+	
+	Accelerate(MovementDirection);
+	Move();
+	Steer(SteeringDirection);
+	Turn();
+}
+
 void ACar::Accelerate(int8 Direction)
 {
 	
@@ -42,10 +51,12 @@ void ACar::Accelerate(int8 Direction)
 		CurrentSpeed = FMath::FInterpTo(CurrentSpeed,DirectedMaxSpeed,DeltaTime,1.0f);
 
 		/*
-			When Direction == 0 and the CurrentSpeed is in the Intervall [1,-1], the movement is not noticable, but the FInterpTo function takes a lot of time to reach 0.
-			To skip this waiting time, CurrentSpeed is set to 0 when CurrentSpeed is in The Intervall [1,-1].
-		*/ 
-		if(CurrentSpeed < 1 && CurrentSpeed > -1 && Direction == 0)
+			When Direction == 0 and the CurrentSpeed is in the Intervall [-FInterpSkipAngle,FInterpSkipAngle], the movement is not noticable, but the FInterpTo function takes a lot of time to reach 0.
+			To skip this waiting time, CurrentSpeed is set to 0 when CurrentSpeed is in The Intervall [-FInterpSkipAngle,FInterpSkipAngle].
+		*/
+		float InterpToSkipAngle = 1;
+
+		if(CurrentSpeed < InterpToSkipAngle && CurrentSpeed > -InterpToSkipAngle && Direction == 0)
 		{
 			CurrentSpeed = 0;
 		}
@@ -70,7 +81,7 @@ void ACar::Break()
 	checkf(CurrentSpeed >= MAX_SPEED_BACKWARD && CurrentSpeed <= MAX_SPEED_FOREWARD, TEXT("CurrentSpeed is not in the Interval [MAX_SPEED_BACKWARD,MAX_SPEED_FOREWARD]."));
 }
 
-void ACar::Move(float DeltaTime)
+void ACar::Move()
 {
 	if(CurrentSpeed >= MAX_SPEED_BACKWARD)
 	{
@@ -107,6 +118,17 @@ void ACar::Steer(int8 Direction)
 
 	*/
 	CurrentSteeringAngle = FMath::FInterpTo(CurrentSteeringAngle,DirectedMaxSteeringAngle,DeltaTime,4.0f);
+
+	/*
+		When Direction == 0 and the CurrentSteeringAngle is in the Intervall [-FInterpSkipAngle,FInterpSkipAngle], the movement is almost not noticable, but the FInterpTo function takes a lot of time to reach 0.
+		To skip this waiting time, CurrentSteerinAngle is set to 0 when CurrentSteeringAngle is in The Intervall [-FInterpSkipAngle,FInterpSkipAngle].
+	*/
+	float InterpToSkipAngle = 0.2f;
+	if(CurrentSteeringAngle < InterpToSkipAngle && CurrentSteeringAngle > -InterpToSkipAngle && Direction == 0)
+	{
+		CurrentSteeringAngle = 0;
+	}
+
 	checkf(CurrentSteeringAngle >= -MaxSteeringAngle && CurrentSteeringAngle <= MaxSteeringAngle, TEXT("CurrentSteeringAngle is not in the Interval [-MaxSteeringAngle,MaxSteeringAngle]."));
 }
 
@@ -154,19 +176,12 @@ void ACar::BeginPlay()
 // Called every frame
 void ACar::Tick(float DeltaTime)
 {
-	Accelerate(MovementDirection);
-	Move(DeltaTime);
-
-	Steer(SteeringDirection);
-	Turn();
-	//UE_LOG(LogTemp,Log,TEXT("MovementDirection: %d \n"),MovementDirection);
-	//UE_LOG(LogTemp,Log,TEXT("SteeringDirection: %d \n"),SteeringDirection);
+	Super::Tick(DeltaTime);
 }
 
 void ACar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 #pragma endregion

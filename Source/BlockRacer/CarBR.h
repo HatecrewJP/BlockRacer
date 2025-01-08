@@ -22,7 +22,11 @@ public:
 	ACar();
 	virtual void Tick(float DeltaTime) override;
 	
+	UFUNCTION(BlueprintCallable)
+	void MoveCar();
+
 #pragma region Car Movement
+	//State modification Methods
 	void Accelerate(int8 Direction);
 	void Break();
 	void Steer(int8 Direction);
@@ -46,15 +50,14 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-
-	
-
 private:
 
-	void Move(float DeltaTime);
+
+#pragma region Car Movement
+	void Move();
 	void Turn();
 	float CalculateLinearSpeedToRotationFactor(float Speed);
+#pragma endregion
 
 #pragma region Car Properties
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
