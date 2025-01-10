@@ -24,7 +24,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void MoveCar();
-
+	
 #pragma region Car Movement
 	//State modification Methods
 	void Accelerate(int8 Direction);
@@ -51,7 +51,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 private:
-
+	float CalculateGravityOffset(FVector Location);
+	FCollisionShape GetCollisionBox();
 
 #pragma region Car Movement
 	void Move();
@@ -79,6 +80,15 @@ private:
 	float MaxFactor = 0.02 ;
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
 	float MinFactor = 0.001;
+
+	UPROPERTY(EditAnywhere, Category = "Car Properties| Movement")
+	float CarGravityConstant = 6;
+
+	UPROPERTY(EditAnywhere, Category = "Car Properties|Details")
+	float CarBottomToGroundOffset = 20;
+
+	
+	
 
 #pragma endregion
 	

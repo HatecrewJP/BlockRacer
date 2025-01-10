@@ -4,10 +4,14 @@
 #include "CarBR.h"
 #include "Misc/App.h"
 
+
+
+
 // Sets default values
 ACar::ACar()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	
 }
 #pragma region Car Movement
 void ACar::MoveCar()
@@ -81,20 +85,71 @@ void ACar::Break()
 	checkf(CurrentSpeed >= MAX_SPEED_BACKWARD && CurrentSpeed <= MAX_SPEED_FOREWARD, TEXT("CurrentSpeed is not in the Interval [MAX_SPEED_BACKWARD,MAX_SPEED_FOREWARD]."));
 }
 
+FCollisionShape ACar::GetCollisionBox()
+{
+	FVector BoxOrigin;
+	FVector BoxExtent;
+	GetActorBounds(true,BoxOrigin,BoxExtent);
+
+	FVector CollisionBoxExtent = BoxExtent;
+	CollisionBoxExtent.Z = 0.2;
+	
+	return FCollisionShape::MakeBox(CollisionBoxExtent);
+}
+float ACar::CalculateGravityOffset(FVector Location)
+{
+	const UWorld* CurrentWorld = GetWorld();
+	checkf(CurrentWorld,TEXT("Trying to move the car without an existing world"));
+
+	
+	//SweepSingleByChannel parameter declaration
+	FVector 			ActorLocation 			= GetActorLocation();
+	FVector 			SweepStart 				= ActorLocation - FVector(0,0,-1);
+	FVector 			SweepEnd 				= ActorLocation + FVector(0,0,-6);
+	ECollisionChannel 	GravityCollisionChannel = ECC_GameTraceChannel1;
+	FCollisionShape 	CarGravityCollisionBox 	= GetCollisionBox();
+	FHitResult 			HitResult;
+	
+	
+	
+
+	bool  IsHit 			= CurrentWorld -> SweepSingleByChannel(HitResult,SweepStart,SweepEnd,FQuat::Identity,GravityCollisionChannel,CarGravityCollisionBox);
+	float NewGravityOffset 	= CarGravityConstant;
+	if(IsHit)
+	{	
+		float DistanceToGround = ActorLocation.Z - HitResult.ImpactPoint.Z;
+		if(DistanceToGround < CarGravityConstant )
+		{
+			NewGravityOffset = DistanceToGround;
+		}
+	}
+	DrawDebugBox(CurrentWorld,Location,CarGravityCollisionBox.GetExtent(),FColor::Red,false,1,0,1);
+	return NewGravityOffset;
+}
+
 void ACar::Move()
 {
 	if(CurrentSpeed >= MAX_SPEED_BACKWARD)
 	{
 		
+
 		FVector ForwardVector = GetActorForwardVector();
 		FVector DeltaLocation = ForwardVector * CurrentSpeed;
+		FVector NewLocation = GetActorLocation() + DeltaLocation;
 		
 		
-
+		float GravityOffset = CalculateGravityOffset(NewLocation);
+		DeltaLocation += FVector(0,0, -GravityOffset);
 		AddActorWorldOffset(DeltaLocation);
+		
 
+		//UE_LOG(LogTemp,Display,TEXT("CollisionBoxExtent: %s"  ),*CollisionBoxExtent  .ToString());
+		//UE_LOG(LogTemp,Display,TEXT("Sweep Start: %s"),*SweepStart.ToString());
+		//UE_LOG(LogTemp,Display,TEXT("Sweep End: %s"  ),*SweepEnd  .ToString());
+		//UE_LOG(LogTemp,Log,TEXT("GravityOffset: %f"),GravityOffset);
+		//UE_LOG(LogTemp,Display,TEXT("Is Hit: %f"),float(IsHit));
 		//UE_LOG(LogTemp,Display,TEXT("Delta Location: %s"),*DeltaLocation.ToString());
-		UE_LOG(LogTemp,Log,TEXT("Speed: %f \n"),CurrentSpeed);
+		//UE_LOG(LogTemp,Log,TEXT("Speed: %f \n"),CurrentSpeed);
 	}
 	checkf(CurrentSpeed >= MAX_SPEED_BACKWARD && CurrentSpeed <= MAX_SPEED_FOREWARD, TEXT("CurrentSpeed is not in the Interval [MAX_SPEED_BACKWARD,MAX_SPEED_FOREWARD]."));
 }
