@@ -85,48 +85,6 @@ void ACar::Break()
 	checkf(CurrentSpeed >= MAX_SPEED_BACKWARD && CurrentSpeed <= MAX_SPEED_FOREWARD, TEXT("CurrentSpeed is not in the Interval [MAX_SPEED_BACKWARD,MAX_SPEED_FOREWARD]."));
 }
 
-FCollisionShape ACar::GetCollisionBox()
-{
-	FVector BoxOrigin;
-	FVector BoxExtent;
-	GetActorBounds(true,BoxOrigin,BoxExtent);
-
-	FVector CollisionBoxExtent = BoxExtent;
-	CollisionBoxExtent.Z = 0.2;
-	
-	return FCollisionShape::MakeBox(CollisionBoxExtent);
-}
-float ACar::CalculateGravityOffset(FVector Location)
-{
-	const UWorld* CurrentWorld = GetWorld();
-	checkf(CurrentWorld,TEXT("Trying to move the car without an existing world"));
-
-	
-	//SweepSingleByChannel parameter declaration
-	FVector 			ActorLocation 			= GetActorLocation();
-	FVector 			SweepStart 				= ActorLocation - FVector(0,0,-1);
-	FVector 			SweepEnd 				= ActorLocation + FVector(0,0,-6);
-	ECollisionChannel 	GravityCollisionChannel = ECC_GameTraceChannel1;
-	FCollisionShape 	CarGravityCollisionBox 	= GetCollisionBox();
-	FHitResult 			HitResult;
-	
-	
-	
-
-	bool  IsHit 			= CurrentWorld -> SweepSingleByChannel(HitResult,SweepStart,SweepEnd,FQuat::Identity,GravityCollisionChannel,CarGravityCollisionBox);
-	float NewGravityOffset 	= CarGravityConstant;
-	if(IsHit)
-	{	
-		float DistanceToGround = ActorLocation.Z - HitResult.ImpactPoint.Z;
-		if(DistanceToGround < CarGravityConstant )
-		{
-			NewGravityOffset = DistanceToGround;
-		}
-	}
-	DrawDebugBox(CurrentWorld,Location,CarGravityCollisionBox.GetExtent(),FColor::Red,false,1,0,1);
-	return NewGravityOffset;
-}
-
 void ACar::Move()
 {
 	if(CurrentSpeed >= MAX_SPEED_BACKWARD)
@@ -219,7 +177,54 @@ float ACar::CalculateLinearSpeedToRotationFactor(float Speed)
 	return m * Speed + n;
 }
 
+FCollisionShape ACar::GetCollisionBox()
+{
+	FVector BoxOrigin;
+	FVector BoxExtent;
+	GetActorBounds(true,BoxOrigin,BoxExtent);
+
+	FVector CollisionBoxExtent = BoxExtent;
+	CollisionBoxExtent.Z = 0.2;
+	
+	return FCollisionShape::MakeBox(CollisionBoxExtent);
+}
+
+float ACar::CalculateGravityOffset(FVector Location)
+{
+	const UWorld* CurrentWorld = GetWorld();
+	checkf(CurrentWorld,TEXT("Trying to move the car without an existing world"));
+
+	
+	//SweepSingleByChannel parameter declaration
+	FVector 			ActorLocation 			= GetActorLocation();
+	FVector 			SweepStart 				= ActorLocation - FVector(0,0,-1);
+	FVector 			SweepEnd 				= ActorLocation + FVector(0,0,-6);
+	ECollisionChannel 	GravityCollisionChannel = ECC_GameTraceChannel1;
+	FCollisionShape 	CarGravityCollisionBox 	= GetCollisionBox();
+	FHitResult 			HitResult;
+	
+	
+	
+
+	bool  IsHit 			= CurrentWorld -> SweepSingleByChannel(HitResult,SweepStart,SweepEnd,FQuat::Identity,GravityCollisionChannel,CarGravityCollisionBox);
+	float NewGravityOffset 	= CarGravityConstant;
+	if(IsHit)
+	{	
+		float DistanceToGround = ActorLocation.Z - HitResult.ImpactPoint.Z;
+		if(DistanceToGround < CarGravityConstant )
+		{
+			NewGravityOffset = DistanceToGround;
+		}
+	}
+	DrawDebugBox(CurrentWorld,Location,CarGravityCollisionBox.GetExtent(),FColor::Red,false,1,0,1);
+	return NewGravityOffset;
+}
 #pragma endregion
+
+void ACar::AddPoints(int PointsToAdd)
+{
+	this->CurrentPoints += PointsToAdd;
+}
 
 #pragma region DefaultFunctions
 // Called when the game starts or when spawned
@@ -250,6 +255,11 @@ float ACar::GetCurrentSpeed()
 float ACar::GetCurrentSteeringAngle()
 {
     return this->CurrentSteeringAngle;
+}
+
+int ACar::GetCurrentPoints()
+{
+	return this->CurrentPoints;
 }
 #pragma endregion
 

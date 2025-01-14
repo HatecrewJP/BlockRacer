@@ -23,7 +23,9 @@ class BLOCKRACER_API ADrivingPlayerControllerBR : public APlayerController
 
 #pragma region InputAction
 public:
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input| Character Movement")
+	UInputMappingContext* InputMappingContext = nullptr;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input| Character Movement")
 	UInputAction* Move = nullptr;
 
@@ -34,8 +36,7 @@ public:
 	UInputAction* Steering = nullptr;
 
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Player Input| Character Movement")
-	UInputMappingContext* InputMappingContext = nullptr;
+	
 	
 #pragma endregion
 

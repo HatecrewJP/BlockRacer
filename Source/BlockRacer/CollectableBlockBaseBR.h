@@ -23,10 +23,13 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	uint32 GetBlockValue();
-	void SetBlockValue(uint32 NewBlockValue);
+	UFUNCTION(BlueprintCallable)
+	int GetBlockValue();
+
+
+	void SetBlockValue(int NewBlockValue);
 
 private:
-	uint32 BlockValue = 10;
-	const uint32 DefaultBlockValue = BlockValue;
+	int BlockValue = 10;
+	const int DefaultBlockValue = BlockValue;
 };

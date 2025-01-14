@@ -25,12 +25,12 @@ void ACollectableBlockBaseBR::Tick(float DeltaTime)
 
 }
 
-uint32 ACollectableBlockBaseBR::GetBlockValue()
+int ACollectableBlockBaseBR::GetBlockValue()
 {
 	return BlockValue;
 }
 
-void ACollectableBlockBaseBR::SetBlockValue(uint32 NewBlockValue)
+void ACollectableBlockBaseBR::SetBlockValue(int NewBlockValue)
 {
-	BlockValue = NewBlockValue;
+	this->BlockValue = NewBlockValue;
 }

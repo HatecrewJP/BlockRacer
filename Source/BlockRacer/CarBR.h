@@ -24,6 +24,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void MoveCar();
+
+	UFUNCTION(BlueprintCallable)
+	void AddPoints(int PointsToAdd);
 	
 #pragma region Car Movement
 	//State modification Methods
@@ -43,6 +46,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	float GetCurrentSteeringAngle();
+
+	UFUNCTION(BlueprintCallable)
+	int GetCurrentPoints();
 #pragma endregion
 	
 
@@ -100,6 +106,8 @@ private:
 
 	float CurrentSpeed = 0;
 	float CurrentSteeringAngle = 0;
+
+	int CurrentPoints = 0;
 
 #pragma endregion
 	
