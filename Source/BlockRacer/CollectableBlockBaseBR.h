@@ -26,10 +26,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	int GetBlockValue();
 
-
+	UFUNCTION(BluePrintCallable)
 	void SetBlockValue(int NewBlockValue);
 
-private:
+protected:
 	int BlockValue = 10;
 	const int DefaultBlockValue = BlockValue;
 };
