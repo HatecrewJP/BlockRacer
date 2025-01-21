@@ -5,6 +5,7 @@
 
 void AMenuHudBR::SetCursorPosition(FVector2D NewCursorPosition)
 {
+    
 }
 
 void AMenuHudBR::CloseMenu()

@@ -9,7 +9,10 @@
 #include "GameFramework/Character.h"
 #include "CarBR.generated.h"
 
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FIntStatUpdated,
+                                               int32, OldValue,
+                                               int32, NewValue,
+                                               int32, MaxValue);
 
 
 UCLASS()
@@ -51,7 +54,16 @@ public:
 	int GetCurrentPoints();
 #pragma endregion
 	
+#pragma region Update
+	UPROPERTY(BlueprintAssignable, Category = "Car|Points")
+	FIntStatUpdated OnPointsChanged;
 
+	UFUNCTION(BlueprintCallable, Category = "Car|Points")
+	void UpdatePoints(int NewPoints);
+	UFUNCTION()
+	void BroadcastCurrentStats();
+
+#pragma endregion
 
 protected:
 	// Called when the game starts or when spawned
@@ -65,6 +77,10 @@ private:
 	void Turn();
 	float CalculateLinearSpeedToRotationFactor(float Speed);
 #pragma endregion
+
+
+
+
 
 #pragma region Car Properties
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")

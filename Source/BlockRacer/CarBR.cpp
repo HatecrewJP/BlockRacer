@@ -223,9 +223,27 @@ float ACar::CalculateGravityOffset(FVector Location)
 
 void ACar::AddPoints(int PointsToAdd)
 {
-	this->CurrentPoints += PointsToAdd;
+	UpdatePoints(PointsToAdd);
 }
 
+void ACar::UpdatePoints(int NewPoints)
+{
+	int OldPoints = this->CurrentPoints;
+	this->CurrentPoints += NewPoints;
+
+	CurrentPoints = FMath::Clamp(CurrentPoints,0,MAX_int32);
+
+	if(OldPoints != CurrentPoints)
+	{
+		OnPointsChanged.Broadcast(OldPoints,CurrentPoints,MAX_int32);
+	}
+	
+
+}
+void ACar::BroadcastCurrentStats()
+{
+	OnPointsChanged.Broadcast(CurrentPoints,CurrentPoints,MAX_int32);
+}
 #pragma region DefaultFunctions
 // Called when the game starts or when spawned
 void ACar::BeginPlay()
@@ -276,3 +294,6 @@ void ACar::SetSteeringDirection(float Direction)
 	this->SteeringDirection = Direction;
 }
 #pragma endregion
+
+
+

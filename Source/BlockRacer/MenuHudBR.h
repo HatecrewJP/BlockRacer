@@ -23,5 +23,6 @@ public:
 	void MoveLeft();
 	void MoveRight();
 	void Select();
+
 #pragma endregion
 };
