@@ -41,7 +41,7 @@ void UPointsDisplayWidgetBR::UpdateWidget()
 
     PointsText -> SetColorAndOpacity(FSlateColor(NewColor));
 }
-
+#if WITH_EDITOR
 void UPointsDisplayWidgetBR::OnDesignerChanged(const FDesignerChangedEventArgs& EventArgs)
 {
     Super::OnDesignerChanged(EventArgs);
@@ -53,3 +53,4 @@ void UPointsDisplayWidgetBR::PostEditChangeProperty(FPropertyChangedEvent& Prope
     Super::PostEditChangeProperty(PropertyChangedEvent);
     UpdateWidget();
 }
+#endif
