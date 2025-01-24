@@ -3,11 +3,15 @@
 #pragma once
 
 #include "Components/SphereComponent.h"
-
+#include "CarAnimInstanceBR.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "CarBR.generated.h"
+
+
+
+
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FIntStatUpdated,
                                                int32, OldValue,
@@ -17,8 +21,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FIntStatUpdated,
 
 UCLASS()
 class BLOCKRACER_API ACar : public APawn
-{
-	GENERATED_BODY()
+{	GENERATED_BODY()
 	
 public:
 
@@ -30,7 +33,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddPoints(int PointsToAdd);
-	
+
+
+
 #pragma region Car Movement
 	//State modification Methods
 	void Accelerate(int8 Direction);
@@ -69,8 +74,15 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 private:
-	float CalculateGravityOffset(FVector Location);
+	
+	UCarAnimInstanceBR* GetCarAnimInstance();
+
+#pragma region Collision
+	FCollisionShape GetCollisionBoxWithScale(FVector ScaleVector = FVector(1,1,1));
 	FCollisionShape GetCollisionBox();
+	float CalculateGravityOffset(FVector Location);
+	bool CheckForCollisionInMovementDirection(int Direction);
+#pragma endregion
 
 #pragma region Car Movement
 	void Move();
@@ -90,7 +102,7 @@ private:
 	float MAX_SPEED_BACKWARD = -30;
 
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
-	float Deceleration = 1;
+	float CarDeceleration = 1;
 
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
 	float BreakingMultiplier = 1.2;
@@ -109,8 +121,14 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Details")
 	float CarBottomToGroundOffset = 20;
 
+
+	UPROPERTY(EditAnywhere, Category = "Car Properties|Animation")
+	UCarAnimInstanceBR* CarAnimInstance = nullptr;
+
 	
-	
+
+	USceneComponent* CollisionBox = nullptr;
+
 
 #pragma endregion
 	

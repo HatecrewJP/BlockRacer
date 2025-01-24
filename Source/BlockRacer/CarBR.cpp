@@ -1,16 +1,40 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "CarBR.h"
 #include "Misc/App.h"
 
 
-
+UCarAnimInstanceBR* ACar::GetCarAnimInstance()
+{
+	USceneComponent* CarRootComponent = GetRootComponent();
+	checkf(CarRootComponent,TEXT("No Root Component found"))
+	TArray<USceneComponent*> CarComponents;
+	CarRootComponent->GetChildrenComponents(true,CarComponents);
+	for(USceneComponent* CurrentComponent : CarComponents)
+	{
+		if(CurrentComponent->IsA(USkeletalMeshComponent::StaticClass()))
+		{
+			UAnimInstance* AnimInstance = Cast<USkeletalMeshComponent>(CurrentComponent)->GetAnimInstance();
+			if(AnimInstance)
+			{
+				if(AnimInstance->IsA(UCarAnimInstanceBR::StaticClass()))
+				{
+					return Cast<UCarAnimInstanceBR>(AnimInstance);
+				}
+			}
+			
+		}
+	}
+	return nullptr;
+	
+}
 
 // Sets default values
 ACar::ACar()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	
+
 	
 }
 #pragma region Car Movement
@@ -74,31 +98,37 @@ void ACar::Break()
 
 	if(CurrentSpeed > 0)
 	{
-		float BreakingDeceleration = BreakingMultiplier * Deceleration;
+		float BreakingDeceleration = BreakingMultiplier * CarDeceleration;
 		CurrentSpeed -= BreakingDeceleration;
 	}
 	if(CurrentSpeed < 0)
 	{
-		float BreakingDeceleration = BreakingMultiplier * Deceleration;
+		float BreakingDeceleration = BreakingMultiplier * CarDeceleration;
 		CurrentSpeed += BreakingDeceleration;
 	}
 	checkf(CurrentSpeed >= MAX_SPEED_BACKWARD && CurrentSpeed <= MAX_SPEED_FOREWARD, TEXT("CurrentSpeed is not in the Interval [MAX_SPEED_BACKWARD,MAX_SPEED_FOREWARD]."));
+	
 }
 
 void ACar::Move()
 {
 	if(CurrentSpeed >= MAX_SPEED_BACKWARD)
 	{
-		
 
 		FVector ForwardVector = GetActorForwardVector();
 		FVector DeltaLocation = ForwardVector * CurrentSpeed;
 		FVector NewLocation = GetActorLocation() + DeltaLocation;
 		
-		
+		//GravityOffset is the distance that the car moves towards the ground
 		float GravityOffset = CalculateGravityOffset(NewLocation);
 		DeltaLocation += FVector(0,0, -GravityOffset);
-		AddActorWorldOffset(DeltaLocation);
+		
+		
+		
+		this->AddActorWorldOffset(DeltaLocation);
+		
+	
+
 		
 
 		//UE_LOG(LogTemp,Display,TEXT("CollisionBoxExtent: %s"  ),*CollisionBoxExtent  .ToString());
@@ -163,7 +193,9 @@ void ACar::Turn()
 
 
 }
+#pragma endregion
 
+#pragma region Collsion
 float ACar::CalculateLinearSpeedToRotationFactor(float Speed)
 {
 	/*
@@ -177,6 +209,19 @@ float ACar::CalculateLinearSpeedToRotationFactor(float Speed)
 	return m * Speed + n;
 }
 
+FCollisionShape ACar::GetCollisionBoxWithScale(FVector ScaleVector)
+{
+	FVector BoxOrigin;
+	FVector BoxExtent;
+	GetActorBounds(true,BoxOrigin,BoxExtent);
+
+	FVector CollisionBoxExtent = BoxExtent;
+	//Add 0.1 to avoid making a Box with one Dimension being 0
+	CollisionBoxExtent.X *= ScaleVector.X + 0.1;
+	CollisionBoxExtent.Y *= ScaleVector.Y + 0.1;
+	CollisionBoxExtent.Z = ScaleVector.Z + 0.1;
+	return FCollisionShape::MakeBox(CollisionBoxExtent);
+}
 FCollisionShape ACar::GetCollisionBox()
 {
 	FVector BoxOrigin;
@@ -184,8 +229,8 @@ FCollisionShape ACar::GetCollisionBox()
 	GetActorBounds(true,BoxOrigin,BoxExtent);
 
 	FVector CollisionBoxExtent = BoxExtent;
+	//Add 0.1 to avoid making a Box with one Dimension being 0
 	CollisionBoxExtent.Z = 0.2;
-	
 	return FCollisionShape::MakeBox(CollisionBoxExtent);
 }
 
@@ -203,9 +248,6 @@ float ACar::CalculateGravityOffset(FVector Location)
 	FCollisionShape 	CarGravityCollisionBox 	= GetCollisionBox();
 	FHitResult 			HitResult;
 	
-	
-	
-
 	bool  IsHit 			= CurrentWorld -> SweepSingleByChannel(HitResult,SweepStart,SweepEnd,FQuat::Identity,GravityCollisionChannel,CarGravityCollisionBox);
 	float NewGravityOffset 	= CarGravityConstant;
 	if(IsHit)
@@ -216,11 +258,15 @@ float ACar::CalculateGravityOffset(FVector Location)
 			NewGravityOffset = DistanceToGround;
 		}
 	}
-	DrawDebugBox(CurrentWorld,Location,CarGravityCollisionBox.GetExtent(),FColor::Red,false,1,0,1);
+	//DrawDebugBox(CurrentWorld,Location,CarGravityCollisionBox.GetExtent(),FColor::Red,false,1,0,1);
 	return NewGravityOffset;
 }
+
+
+
 #pragma endregion
 
+#pragma region Points
 void ACar::AddPoints(int PointsToAdd)
 {
 	UpdatePoints(PointsToAdd);
@@ -244,17 +290,34 @@ void ACar::BroadcastCurrentStats()
 {
 	OnPointsChanged.Broadcast(CurrentPoints,CurrentPoints,MAX_int32);
 }
+#pragma endregion
+
 #pragma region DefaultFunctions
 // Called when the game starts or when spawned
 void ACar::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	
+	CarAnimInstance = GetCarAnimInstance();
+	if(!CarAnimInstance)
+	{
+		UE_LOG(LogTemp,Error,TEXT("No CarAnimInstance found"))
+		return;
+	}
+	
 }
 
 // Called every frame
 void ACar::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	MoveCar();
+	if(CarAnimInstance)
+	{
+		CarAnimInstance->SetSteeringAngle(CurrentSteeringAngle);
+		CarAnimInstance->SetSpeed(CurrentSpeed);
+	}
 }
 
 void ACar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
