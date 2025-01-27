@@ -23,23 +23,4 @@ void UCarAnimInstanceBR::SetSpeed(float NewSpeed)
 {
     this->Speed = NewSpeed;
 }
-float UCarAnimInstanceBR::fGetSpeed()
-{
-    return this->Speed;
-}
-float UCarAnimInstanceBR::fGetSteeringAngle()
-{
-    return this->SteeringAngle;
-}
-float UCarAnimInstanceBR::fGetTireRadius()
-{
-    return this-> TireRadius;
-}
-float UCarAnimInstanceBR::fGetFrontRotAngle()
-{
-    return this->FrontRotAngle;
-}
-float UCarAnimInstanceBR::fGetRearRotAngle()
-{
-    return this->RearRotAngle;
-}
+
