@@ -17,16 +17,7 @@ public:
 	void SetSpeed(float NewSpeed);
 	void SetSteeringAngle(float NewSteeringAngle);
 
-	UFUNCTION(BlueprintCallable)
-	float fGetSpeed();
-	UFUNCTION(BlueprintCallable)
-	float fGetSteeringAngle();
-	UFUNCTION(BlueprintCallable)
-	float fGetTireRadius();
-	UFUNCTION(BlueprintCallable)
-	float fGetFrontRotAngle();
-	UFUNCTION(BlueprintCallable)
-	float fGetRearRotAngle();
+	
 	
 
 
