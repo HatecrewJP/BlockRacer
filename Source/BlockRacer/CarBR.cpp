@@ -82,7 +82,7 @@ void ACar::Accelerate(int8 Direction)
 			When Direction == 0 and the CurrentSpeed is in the Intervall [-FInterpSkipAngle,FInterpSkipAngle], the movement is not noticable, but the FInterpTo function takes a lot of time to reach 0.
 			To skip this waiting time, CurrentSpeed is set to 0 when CurrentSpeed is in The Intervall [-FInterpSkipAngle,FInterpSkipAngle].
 		*/
-		float InterpToSkipAngle = 1;
+		float InterpToSkipAngle = 0.2;
 
 		if(CurrentSpeed < InterpToSkipAngle && CurrentSpeed > -InterpToSkipAngle && Direction == 0)
 		{
@@ -166,9 +166,11 @@ void ACar::Steer(int8 Direction)
 		When Direction == 0 and the CurrentSteeringAngle is in the Intervall [-FInterpSkipAngle,FInterpSkipAngle], the movement is almost not noticable, but the FInterpTo function takes a lot of time to reach 0.
 		To skip this waiting time, CurrentSteerinAngle is set to 0 when CurrentSteeringAngle is in The Intervall [-FInterpSkipAngle,FInterpSkipAngle].
 	*/
-	float InterpToSkipAngle = 0.2f;
-	if(CurrentSteeringAngle < InterpToSkipAngle && CurrentSteeringAngle > -InterpToSkipAngle && Direction == 0)
+	
+	float InterpToSkipAngle = 0.02f;
+	if(CurrentSteeringAngle < InterpToSkipAngle && CurrentSteeringAngle > -InterpToSkipAngle)// && Direction == 0)
 	{
+		
 		CurrentSteeringAngle = 0;
 	}
 
@@ -183,7 +185,7 @@ void ACar::Turn()
 		The desired behaviour is the opposite: At high speeds the car is supposed to steer less than at lower speed.
 		To Compensate for this, a SpeedToRotationFactor is calculated based on the CurrentSpeed.
 	*/
-	float SpeedToRotationFactor = CalculateLinearSpeedToRotationFactor(CurrentSpeed);
+	float SpeedToRotationFactor = CalculatePseudoLinearSpeedToRotationFactor(CurrentSpeed);
 	float DeltaTime = FApp::GetDeltaTime();
 	FRotator NewRotation = FRotator::ZeroRotator;
 	float RotationAngle = CurrentSteeringAngle * CurrentSpeed * SpeedToRotationFactor;
@@ -196,7 +198,49 @@ void ACar::Turn()
 #pragma endregion
 
 #pragma region Collsion
-float ACar::CalculateLinearSpeedToRotationFactor(float Speed)
+
+float ACar::CalculateDoubleLinearSpeedToRotationFactor(float Speed)
+{
+	/*
+		Calculates "SpeedToRotationFactor".
+		The faster the car gets, the less it should depend on the current speed.
+		Therefore the SpeedToRotationFactor gets lower when the car is faster.
+		To make the car rotate more at lower speeds, two linear functions determine the SpeedToRotationFactor.
+		
+
+		
+	*/
+	float SpeedThresholdToChangeFunction = MAX_SPEED_FOREWARD * 0.2;
+	float ThresholdSpeedFactor = (LowSpeedfactor - HighSpeedFactor) * 0.5;
+	if(Speed < SpeedThresholdToChangeFunction)
+	{
+		float n = LowSpeedfactor;
+		float m = (LowSpeedfactor / SpeedThresholdToChangeFunction - ThresholdSpeedFactor) / SpeedThresholdToChangeFunction ;
+		return m * Speed + n;
+	}
+
+	float n = ThresholdSpeedFactor;
+	float m = (ThresholdSpeedFactor / MAX_SPEED_FOREWARD - HighSpeedFactor) / MAX_SPEED_FOREWARD ;
+	return m * Speed + n;
+	
+
+}
+
+float ACar::CalculatePseudoLinearSpeedToRotationFactor(float Speed)
+{
+	/*
+		Calculates "SpeedToRotationFactor".
+		The faster the car gets, the less it should depend on the current speed.
+		Therefore the SpeedToRotationFactor gets lower when the car is faster.
+		For simplicity reasons this function is a pseudo linear function mx+n and the SpeedToRotationFactor is calculated based on the MAX_SPEED_FOREWARD.
+		This function tries to compensate different MAX_SPEED_FOREWARD values.
+	*/
+	float PseudoLinearTweakValue = 0.8;
+	float n = HighSpeedFactor;
+	float m = (LowSpeedfactor / MAX_SPEED_FOREWARD - HighSpeedFactor) / MAX_SPEED_FOREWARD;
+	return m * PseudoLinearTweakValue * Speed + n;
+}
+float ACar::CalculateTrueLinearSpeedToRotationFactor(float Speed)
 {
 	/*
 		Calculates "SpeedToRotationFactor".
@@ -204,9 +248,11 @@ float ACar::CalculateLinearSpeedToRotationFactor(float Speed)
 		Therefore the SpeedToRotationFactor gets lower when the car is faster.
 		For simplicity reasons this function is a linear function mx+n and the SpeedToRotationFactor is calculated based on the MAX_SPEED_FOREWARD.
 	*/
-	float n = MinFactor;
-	float m = (MaxFactor / MAX_SPEED_FOREWARD - MinFactor) / MAX_SPEED_FOREWARD ;
+
+	float n = LowSpeedfactor;
+	float m = (HighSpeedFactor - LowSpeedfactor) / MAX_SPEED_FOREWARD;
 	return m * Speed + n;
+
 }
 
 FCollisionShape ACar::GetCollisionBoxWithScale(FVector ScaleVector)

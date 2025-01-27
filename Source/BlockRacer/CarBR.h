@@ -81,13 +81,14 @@ private:
 	FCollisionShape GetCollisionBoxWithScale(FVector ScaleVector = FVector(1,1,1));
 	FCollisionShape GetCollisionBox();
 	float CalculateGravityOffset(FVector Location);
-	bool CheckForCollisionInMovementDirection(int Direction);
 #pragma endregion
 
 #pragma region Car Movement
 	void Move();
 	void Turn();
-	float CalculateLinearSpeedToRotationFactor(float Speed);
+	float CalculateDoubleLinearSpeedToRotationFactor(float Speed);
+	float CalculatePseudoLinearSpeedToRotationFactor(float Speed);
+	float CalculateTrueLinearSpeedToRotationFactor(float Speed);
 #pragma endregion
 
 
@@ -96,7 +97,7 @@ private:
 
 #pragma region Car Properties
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
-	float MAX_SPEED_FOREWARD = 240;
+	float MAX_SPEED_FOREWARD = 120;
 
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
 	float MAX_SPEED_BACKWARD = -30;
@@ -111,10 +112,9 @@ private:
 	float MaxSteeringAngle = 20.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement" )
-	float MaxFactor = 0.02 ;
+	float HighSpeedFactor = 0.002 ;
 	UPROPERTY(EditAnywhere, Category = "Car Properties|Movement")
-	float MinFactor = 0.001;
-
+	float LowSpeedfactor = 0.02;
 	UPROPERTY(EditAnywhere, Category = "Car Properties| Movement")
 	float CarGravityConstant = 6;
 
