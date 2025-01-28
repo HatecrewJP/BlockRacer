@@ -28,18 +28,20 @@ void UPointsDisplayWidgetBR::UpdateWidget()
     
     if(!ValueText || !PointsText) return;
     FText Points = ConvertPointsToText(this->CurrentPoints);
-    UE_LOG(LogTemp,Display,TEXT("Points: %d"),CurrentPoints);
+    //UE_LOG(LogTemp,Display,TEXT("Points: %d"),CurrentPoints);
     ValueText->SetText(Points);
 
-    uint8 NewRed    = FMath::Lerp(0,1,FApp::GetDeltaTime());
-    uint8 NewGreen  = FMath::Lerp(0,1,FApp::GetDeltaTime());
-    uint8 NewBlue   = FMath::Lerp(0,1,FApp::GetDeltaTime());
+    /*
+    uint8 NewRed    = FMath::Clamp(CurrentPoints / 255 * 3, 0, 255);
+    uint8 NewGreen  = FMath::Clamp(CurrentPoints / 255 * 3, 0, 255);
+    uint8 NewBlue   = FMath::Clamp(CurrentPoints / 255 * 3, 0, 255);
     uint8 NewAlpha  = 0xFF;
 
+
     FColor NewColor = FColor(NewRed,NewGreen,NewBlue,NewAlpha);
-
-
+    
     PointsText -> SetColorAndOpacity(FSlateColor(NewColor));
+    */
 }
 #if WITH_EDITOR
 void UPointsDisplayWidgetBR::OnDesignerChanged(const FDesignerChangedEventArgs& EventArgs)

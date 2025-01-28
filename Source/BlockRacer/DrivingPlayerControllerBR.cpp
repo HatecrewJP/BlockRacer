@@ -14,6 +14,7 @@ void ADrivingPlayerControllerBR::OnPossess(APawn *aPawn)
     EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
     checkf(EnhancedInputComponent,TEXT("Unable to get reference to EnhancedInputComponent"));
 
+
     UEnhancedInputLocalPlayerSubsystem* EnhancedInputLocalPlayerSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
     checkf(EnhancedInputLocalPlayerSubsystem, TEXT("Unable to get reference to EnhancedLocalPlayerSubsystem"));
 
