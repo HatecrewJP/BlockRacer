@@ -364,6 +364,10 @@ void ACar::Tick(float DeltaTime)
 		CarAnimInstance->SetSteeringAngle(CurrentSteeringAngle);
 		CarAnimInstance->SetSpeed(CurrentSpeed);
 	}
+	if(CurrentPoints >= WinCondition)
+	{
+		this-> SetIsNotActiveInGame();
+	}
 }
 
 void ACar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -374,6 +378,12 @@ void ACar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 #pragma endregion
 
 #pragma region Getter
+
+bool ACar::GetIsActiveInGame()
+{
+	return this->IsActiveInGame;
+}
+
 float ACar::GetCurrentSpeed()
 {
     return this->CurrentSpeed;
@@ -391,6 +401,12 @@ int ACar::GetCurrentPoints()
 #pragma endregion
 
 #pragma region Setter
+
+void ACar::SetIsNotActiveInGame()
+{
+	this->IsActiveInGame = false;
+}
+
 void ACar::SetMovementDirection(float Direction)
 {
 	checkf(Direction == 1 || Direction == 0 || Direction == -1, TEXT("Trying to set an invalid MovementDirection. The allowed Direction Values are: 0, 1, -1"));

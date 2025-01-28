@@ -24,6 +24,8 @@ class BLOCKRACER_API ACar : public APawn
 {	GENERATED_BODY()
 	
 public:
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly)
+	int WinCondition = 420;
 
 	ACar();
 	virtual void Tick(float DeltaTime) override;
@@ -44,11 +46,16 @@ public:
 #pragma endregion
 
 #pragma region Setter
+	UFUNCTION(BlueprintCallable)
+	void SetIsNotActiveInGame();
 	void SetMovementDirection(float Direction);
 	void SetSteeringDirection(float Direction);
 #pragma endregion
 
 #pragma region Getter
+	UFUNCTION(BlueprintCallable)
+	bool GetIsActiveInGame();
+
 	UFUNCTION(BlueprintCallable)
 	float GetCurrentSpeed();
 
@@ -134,6 +141,7 @@ private:
 	
 
 #pragma region Car State
+	bool IsActiveInGame = true;
 
 	int8 MovementDirection = 0;
 	int8 SteeringDirection = 0;
